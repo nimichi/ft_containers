@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:40:58 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/15 01:39:57 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/15 02:15:34 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,13 +138,11 @@ namespace ft {
 			}
 
 			size_type size() const{
-				if (_begin == NULL)
-					return (0);
-				return (_end - 1 - _begin);
+				return (_end - _begin);
 			}
 
 			size_type max_size() const{
-				return ((0x2^32)/sizeof(value_type) - 1);
+				return (10000); // TODO
 			}
 
 			void reserve( size_type new_cap ){
@@ -154,9 +152,7 @@ namespace ft {
 			} //inval
 
 			size_type capacity() const{
-				if (_begin == NULL)
-					return (0);
-				return (_limit - 1 - _begin);
+				return (_limit - _begin);
 			}
 
 			// //	Moifiers
@@ -170,7 +166,7 @@ namespace ft {
 			void push_back( const value_type& value ){
 				if (_end == _limit)
 					enlarge();
-				_end = new value_type(value);
+				*_end = value;
 				_end++;
 			} //inval
 
@@ -219,7 +215,7 @@ namespace ft {
 				value_type*		temp_ptr;
 
 				if(size() == 0 && new_cap == 0)
-					new_cap = 0;
+					new_cap = 1;
 				else if (new_cap == 0)
 				{
 					if (size() < max_size() / 2)
@@ -236,8 +232,8 @@ namespace ft {
 					i--;
 					temp_ptr[i] = _begin[i];
 				}
-				_limit = temp_ptr + new_cap + 1;
-				_end = temp_ptr + size() + 1;
+				_limit = temp_ptr + new_cap;
+				_end = temp_ptr + size();
 				delete [] _begin;
 				_begin = temp_ptr;
 			}

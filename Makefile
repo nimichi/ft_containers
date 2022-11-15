@@ -2,7 +2,7 @@ NAME = main
 SRCS = main.cpp
 OBJS := ${SRCS:.cpp=.o}
 CC = c++
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -g #TODO remove -g flag
+CFLAGS = -g -Wall -Wextra -Werror -std=c++98 #TODO remove -g flag
 
 all: $(NAME)
 %.o: %.cpp $(HDR)

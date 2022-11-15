@@ -123,7 +123,7 @@ int main(){
 	vector_str.push_back("abc");
 	vector_str.push_back("def");
 
-	std::cout << (std::string) *vector_str.data() << std::endl;
+	std::cout << (std::string) *vector_str.data() << (std::string) *(vector_str.data() + 1) << std::endl;
 	std::cout << sizeof(vector_str) << std::endl;
 	std::cout << vector_str.size() << std::endl;
 }
