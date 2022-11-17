@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:40:58 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/15 02:15:34 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/17 02:37:11 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,34 +19,107 @@ namespace ft {
 	class vector_iterator{
 		public:
 			//Member types
-			typedef T         value_type;
-			// typedef Distance  difference_type;
-			// typedef Pointer   pointer;
-			// typedef Reference reference;
-			// typedef Category  iterator_category;
+			typedef T								value_type;
+			typedef ptrdiff_t						difference_type;
+			typedef T*								pointer;
+			typedef T&								reference;
+			typedef std::random_access_iterator_tag	iterator_category;
 
 			//Member functions
-			vector_iterator(){
-				_ptr = NULL;
+			vector_iterator() : _ptr(NULL){
+
 			}
 
-			vector_iterator(const vector_iterator& other)
+			vector_iterator(const pointer ptr) : _ptr(ptr)
 			{
-				this = other;
+
 			}
 
-			vector_iterator operator=(const vector_iterator& other)
+			vector_iterator(const vector_iterator& other) : _ptr(other._ptr)
 			{
-				_ptr = other._ptr;
+
 			}
 
 			~vector_iterator(){
 
 			}
+
+			bool operator==(const vector_iterator& other) const {
+				return(this->_ptr == other._ptr);
+			}
+
+			bool operator<(const vector_iterator& other) const {
+				return(this->_ptr < other._ptr);
+			}
+
+			bool operator!=(const vector_iterator& other) const {
+				return(this->_ptr != other._ptr);
+			}
+
+			bool operator>(const vector_iterator& other) const {
+				return(this->_ptr > other._ptr);
+			}
+
+			bool operator>=(const vector_iterator& other) const {
+				return(this->_ptr >= other._ptr);
+			}
+
+			bool operator<=(const vector_iterator& other) const {
+				return(this->_ptr <= other._ptr);
+			}
+
+			value_type* operator*(){
+				return (_ptr);
+			}
+
+			vector_iterator& operator++(){
+				_ptr++;
+				return (*this);
+			}
+
+			vector_iterator operator++(int){
+				vector_iterator	temp;
+				temp = *this;
+				++*this;
+				return (temp);
+			}
+
+			vector_iterator& operator--(){
+				_ptr--;
+				return (*this);
+			}
+
+			vector_iterator operator--(int){
+				vector_iterator	temp;
+				temp = *this;
+				--*this;
+				return (temp);
+			}
+
+			// vector_iterator operator+(const vector_iterator& other){
+
+			// }
+
+			vector_iterator operator=(const vector_iterator& other)
+			{
+				_ptr = other._ptr;
+				return (*this);
+			}
+
+			// vector_iterator	operator*(size_t count)
+			// {
+
+			// }
+
+			vector_iterator	operator+(size_t count)
+			{
+				_ptr = _ptr + count;
+				return (*this);
+			}
+
 		private:
 			value_type* _ptr;
 	};
-
 
 	template<class T, class Allocator = std::allocator<T> >
 	class vector
@@ -73,16 +146,61 @@ namespace ft {
 			typedef const value_type*                     const_pointer;
 			typedef vector_iterator<value_type>           iterator;
 			// typedef typename MyConstIterator<value_type>           const_iterator;
-			// typedef typename std::reverse_iterator<iterator>       reverse_iterator;
+			typedef std::reverse_iterator<iterator>       reverse_iterator;
 			// typedef typename std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 			//Member functions
 			vector(void) : _begin(NULL), _end(NULL), _limit(NULL){
+				_allocator = std::allocator<value_type>();
+			}
 
+			vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()){
+				_allocator = alloc;
+				resize(n, val);
+			}
+
+			vector (const vector& x){
+				//TODO
 			}
 
 			~vector(void){
 				delete [] _begin;
+			}
+
+			iterator begin(){
+				return(iterator(this->_begin));
+			}
+
+			// const_iterator begin() const{
+			// 	return(iterator(this->_begin));
+			// }
+
+			iterator end(){
+				return(iterator(this->_end));
+			}
+
+			// const_iterator end() const{
+			// 	return(iterator(this->_end));
+			// }
+
+			reverse_iterator rbegin(){
+				return(reverse_iterator(this->_begin));
+			}
+
+			// const_reverse_iterator rbegin() const{
+			// 	return(reverse_iterator(this->_begin))
+			// }
+
+			reverse_iterator rend(){
+				return(reverse_iterator(this->_end));
+			}
+
+			// const_reverse_iterator rend() const{
+			// 	return(reverse_iterator(this->_end))
+			// }
+
+			allocator_type get_allocator() const{
+				return (_allocator);
 			}
 
 			// vector& operator=( const vector& other ); //inval
@@ -132,7 +250,7 @@ namespace ft {
 
 			//	Capacity
 			bool empty() const{
-				if (_begin + 1 == _end || _begin == NULL)
+				if (_begin == _end)
 					return (true);
 				return (false);
 			}
@@ -155,14 +273,56 @@ namespace ft {
 				return (_limit - _begin);
 			}
 
-			// //	Moifiers
-			// void clear(); //inval
+			//	Moifiers
+			void clear(){
+				_end = _begin;
+			} //inval
+
 			// iterator insert( const_iterator pos, const T& value ); //inval
 			// iterator insert( const_iterator pos, size_type count, const T& value ); //inval
 			// constexpr iterator insert( const_iterator pos, size_type count, const T& value ); //inval
 			// template< class InputIt > iterator insert( const_iterator pos, InputIt first, InputIt last ); //inval
-			// iterator erase( iterator pos ); //inval
-			// iterator erase( iterator first, iterator last ); //inval
+
+			iterator erase( iterator pos ){
+				iterator	temp_it;
+				int			i;
+
+				temp_it = begin();
+				while (temp_it != pos && *temp_it != _end)
+					temp_it++;
+				if (*temp_it == _end)
+					return (temp_it);
+				i = 0;
+				while (*temp_it + i + 1 != _end)
+				{
+					*(*temp_it + i) = *(*temp_it + i + 1) ;
+					i++;
+				}
+				_end--;
+				return (temp_it);
+			} //inval
+
+			iterator erase( iterator first, iterator last ){
+				iterator	temp_it;
+				size_type	i;
+				size_type	range;
+
+				temp_it = begin();
+				while (temp_it != first && *temp_it != _end)
+					temp_it++;
+				if (*temp_it == _end)
+					return (temp_it);
+				range = *last - *first + 1;
+				i = 0;
+				while (*temp_it + i + 1 != _end)
+				{
+					*(*temp_it + i) = *(*temp_it + i + range) ;
+					i++;
+				}
+				_end = _end - range;
+				return (temp_it);
+			} //inval
+
 			void push_back( const value_type& value ){
 				if (_end == _limit)
 					enlarge();
@@ -207,9 +367,10 @@ namespace ft {
 			} //inval
 
 		private:
-			value_type* _begin;
-			value_type* _end;
-			value_type* _limit;
+			value_type*		_begin;
+			value_type*		_end;
+			value_type*		_limit;
+			allocator_type	_allocator;
 
 			void enlarge(size_type new_cap = 0){
 				value_type*		temp_ptr;

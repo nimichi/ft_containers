@@ -2,6 +2,7 @@
 #include <string>
 #include <deque>
 
+#include <vector>
 #include "vector.hpp"
 // #if 1 //CREATE A REAL STL EXAMPLE
 // 	#include <map>
@@ -118,12 +119,29 @@
 // }
 
 int main(){
-	ft::vector<std::string> vector_str;
+	ft::vector<std::string>				vector_str;
+	ft::vector<std::string>::iterator	it;
+	std::vector<std::string>			vector_std;
+	std::vector<std::string>::iterator	std;
 
 	vector_str.push_back("abc");
 	vector_str.push_back("def");
+	vector_str.push_back("ghi");
+	vector_str.push_back("jkl");
+	vector_str.push_back("123");
 
-	std::cout << (std::string) *vector_str.data() << (std::string) *(vector_str.data() + 1) << std::endl;
+	vector_std.push_back("abc");
+	vector_std.push_back("def");
+	vector_std.pop_back();
+
+
+	it = ft::vector<std::string>::iterator();
+	it = ++(vector_str.begin());
+	vector_str.erase(it, ++(++it));
+
+	vector_str.pop_back();
+
+	std::cout << (std::string) *vector_str.data() << (std::string) *(vector_std.data() + 2) << std::endl;
 	std::cout << sizeof(vector_str) << std::endl;
 	std::cout << vector_str.size() << std::endl;
 }
