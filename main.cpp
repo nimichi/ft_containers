@@ -118,30 +118,82 @@
 // 	return (0);
 // }
 
-int main(){
-	ft::vector<std::string>				vector_str;
-	ft::vector<std::string>::iterator	it;
-	std::vector<std::string>			vector_std;
-	std::vector<std::string>::iterator	std;
+// int main(){
+// 	ft::vector<std::string>				vector_str;
+// 	ft::vector<std::string>::iterator	it;
+// 	std::vector<std::string>			vector_std;
+// 	std::vector<std::string>::iterator	std;
 
-	vector_str.push_back("abc");
-	vector_str.push_back("def");
-	vector_str.push_back("ghi");
-	vector_str.push_back("jkl");
-	vector_str.push_back("123");
+// 	vector_str.push_back("abc");
+// 	vector_str.push_back("def");
+// 	vector_str.push_back("ghi");
+// 	vector_str.push_back("jkl");
+// 	vector_str.push_back("123");
 
-	vector_std.push_back("abc");
-	vector_std.push_back("def");
-	vector_std.pop_back();
+// 	vector_std.push_back("abc");
+// 	vector_std.push_back("def");
+// 	vector_std.pop_back();
 
 
-	it = ft::vector<std::string>::iterator();
-	it = ++(vector_str.begin());
-	vector_str.erase(it, ++(++it));
+// 	it = ft::vector<std::string>::iterator();
+// 	it = ++(vector_str.begin());
+// 	vector_str.erase(it, ++(++it));
 
-	vector_str.pop_back();
+// 	vector_str.pop_back();
 
-	std::cout << (std::string) *vector_str.data() << (std::string) *(vector_std.data() + 2) << std::endl;
-	std::cout << sizeof(vector_str) << std::endl;
-	std::cout << vector_str.size() << std::endl;
+// 	std::cout << (std::string) *vector_str.data() << (std::string) *(vector_std.data() + 2) << std::endl;
+// 	std::cout << sizeof(vector_str) << std::endl;
+// 	std::cout << vector_str.size() << std::endl;
+// }
+
+template <typename T>
+void	printSize(ft::vector<T> const &vct, bool print_content = true)
+{
+	const long size = vct.size();
+	const long capacity = vct.capacity();
+	const std::string isCapacityOk = (capacity >= size) ? "OK" : "KO";
+	// Cannot limit capacity's max value because it's implementation dependent
+
+	std::cout << "size: " << size << std::endl;
+	std::cout << "capacity: " << isCapacityOk << std::endl;
+	std::cout << "max_size: " << vct.max_size() << std::endl;
+	if (print_content)
+	{
+		typename ft::vector<T>::const_iterator it = vct.begin();
+		typename ft::vector<T>::const_iterator ite = vct.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
 }
+
+int		main(void)
+{
+	ft::vector<std::string> vct(7);
+
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+	{
+		vct.at(i) = (vct.size() - i) * 3;
+		std::cout << "vct.at(): " << vct.at(i) << " | ";
+		std::cout << "vct[]: " << vct[i] << std::endl;
+	}
+	printSize(vct);
+
+	ft::vector<std::string> const vct_c(vct);
+
+	std::cout << "front(): " << vct.front() << " " << vct_c.front() << std::endl;
+	std::cout << "back(): " << vct.back() << " " <<  vct_c.back() << std::endl;
+
+	try {
+		vct.at(10) = 42;
+	}
+	catch (std::out_of_range &e) {
+		std::cout << "Catch out_of_range exception!" << std::endl;
+	}
+	catch (std::exception &e) {
+		std::cout << "Catch exception: " << e.what() << std::endl;
+	}
+	return (0);
+}
+
