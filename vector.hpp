@@ -6,13 +6,14 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:40:58 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/18 18:24:37 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/20 11:08:12 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <memory>
+#include <stdexcept>
 #include "iterators.hpp"
 
 namespace ft {
@@ -36,10 +37,8 @@ namespace ft {
 
 	// 		}
 
-	// 		vector_iterator(const vector_iterator& other) : _ptr(other._ptr)
-	// 		{
 
-	// 		}
+
 
 	// 		~vector_iterator(){
 
@@ -273,7 +272,13 @@ namespace ft {
 			}
 
 			vector(const vector& other) : _begin(NULL), _end(NULL), _limit(NULL), _allocator(other._allocator){
-				this->insert(this->begin(), other.begin(), other.end());
+				enlarge(other.capacity());
+				size_type i = other.size();
+				_end = _begin + i;
+				while(i != 0){
+					i--;
+					_begin[i] = other._begin[i];
+				}
 			}
 
 			~vector(void){
@@ -322,10 +327,14 @@ namespace ft {
 
 			//	Element access
 			reference at( size_type pos ){
+				if (pos >= size())
+					throw std::out_of_range("Error: out of range");
 				return (_begin[pos]);
 			}
 
 			const_reference at( size_type pos ) const{
+				if (pos >= size())
+					throw std::out_of_range("Error: out of range");
 				return (_begin[pos]);
 			}
 
@@ -346,11 +355,11 @@ namespace ft {
 			}
 
 			reference back(){
-				return (*_end);
+				return (*(_end - 1));
 			}
 
 			const_reference back() const{
-				return (*_end);
+				return (*(_end - 1));
 			}
 
 			value_type* data(){
@@ -373,7 +382,7 @@ namespace ft {
 			}
 
 			size_type max_size() const{
-				return (10000); // TODO
+				return (4611686018427387903); // TODO
 			}
 
 			void reserve( size_type new_cap ){
@@ -394,7 +403,7 @@ namespace ft {
 			// iterator insert( const_iterator pos, const T& value ); //inval
 			// iterator insert( const_iterator pos, size_type count, const T& value ); //inval
 			// constexpr iterator insert( const_iterator pos, size_type count, const T& value ); //inval
-			template< class vector_input_iterator > iterator insert( const_iterator pos, vector_input_iterator first, vector_input_iterator last ){
+			template< class input_iterator > iterator insert( const_iterator pos, input_iterator first, input_iterator last ){
 				(void)pos;
 				(void)first;
 				(void)last;

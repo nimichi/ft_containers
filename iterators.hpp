@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:41:12 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/18 18:54:40 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/20 08:57:22 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,19 @@ namespace ft
 		typedef typename Iterator::iterator_category iterator_category;
 	};
 
-	template<class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
+	template<typename T>
 	class vector_iterator
 	{
 		public:
-			typedef T         value_type;
-			typedef Distance  difference_type;
-			typedef Pointer   pointer;
-			typedef Reference reference;
-			typedef Category  iterator_category;
+			typedef T                   value_type;
+			typedef ptrdiff_t           difference_type;
+			typedef T*                  pointer;
+			typedef T&                  reference;
+			typedef input_iterator_tag  iterator_category;
+
+			vector_iterator(){
+
+			}
 
 			vector_iterator(const vector_iterator& other) : _ptr(other._ptr){
 
@@ -66,41 +70,33 @@ namespace ft
 			pointer _ptr;
 	};
 
-	template<class T>
-	class vector_input_iterator : public vector_iterator<input_iterator_tag ,T>
+	template<typename T>
+	class vector_input_iterator : public vector_iterator<T>
 	{
 		public:
-			typedef typename vector_iterator<input_iterator_tag ,T>::value_type        value_type;
-			typedef typename vector_iterator<input_iterator_tag ,T>::difference_type   difference_type;
-			typedef typename vector_iterator<input_iterator_tag ,T>::pointer           pointer;
-			typedef typename vector_iterator<input_iterator_tag ,T>::reference         reference;
-			typedef typename vector_iterator<input_iterator_tag ,T>::iterator_category iterator_category;
-
 			bool operator==(const vector_input_iterator& other) const {
 				return(this->_ptr == other._ptr);
 			}
 	};
 
-	template<class T>
-	class vector_random_access_iterator_iterator : public vector_iterator<random_access_iterator_tag ,T>
+	template<typename T>
+	class vector_random_access_iterator_iterator : public vector_iterator<T>
 	{
 		public:
-			typedef typename vector_iterator<random_access_iterator_tag ,T>::value_type        value_type;
-			typedef typename vector_iterator<random_access_iterator_tag ,T>::difference_type   difference_type;
-			typedef typename vector_iterator<random_access_iterator_tag ,T>::pointer           pointer;
-			typedef typename vector_iterator<random_access_iterator_tag ,T>::reference         reference;
-			typedef typename vector_iterator<random_access_iterator_tag ,T>::iterator_category iterator_category;
-
-			vector_random_access_iterator_iterator(const pointer ptr){
-				_ptr = ptr;
+			vector_random_access_iterator_iterator(const T* ptr){
+				this->_ptr = ptr;
 			}
 
 			vector_random_access_iterator_iterator(const vector_random_access_iterator_iterator& other){
-				_ptr == other._ptr
+				this->_ptr = other._ptr;
 			}
 
-			bool operator==(const vector_input_iterator<T>& other) const {
+			bool operator==(const vector_random_access_iterator_iterator<T>& other) const {
 				return(this->_ptr == other._ptr);
+			}
+
+			bool operator!=(const vector_random_access_iterator_iterator<T>& other) const {
+				return(this->_ptr != other._ptr);
 			}
 	};
 } // namespace ft

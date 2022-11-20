@@ -157,6 +157,7 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 	std::cout << "size: " << size << std::endl;
 	std::cout << "capacity: " << isCapacityOk << std::endl;
 	std::cout << "max_size: " << vct.max_size() << std::endl;
+
 	if (print_content)
 	{
 		typename ft::vector<T>::const_iterator it = vct.begin();
@@ -170,20 +171,46 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 
 int		main(void)
 {
-	ft::vector<std::string> vct(7);
+	ft::vector<int> vct(7);
+
+	int ii = vct.size();
+	(void) ii;
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
 	{
+		int str = vct.at(i);
+		(void) str;
 		vct.at(i) = (vct.size() - i) * 3;
 		std::cout << "vct.at(): " << vct.at(i) << " | ";
 		std::cout << "vct[]: " << vct[i] << std::endl;
 	}
 	printSize(vct);
 
-	ft::vector<std::string> const vct_c(vct);
+	std::vector<int> vcd(7);
+
+	for (unsigned long int i = 0; i < vcd.size(); ++i)
+	{
+		vcd.at(i) = (vcd.size() - i) * 3;
+		std::cout << "vcd.at(): " << vcd.at(i) << " | ";
+		std::cout << "vcd[]: " << vcd[i] << std::endl;
+	}
+
+	std::cout << "max_size: " << vcd.max_size() << std::endl;
+
+	ft::vector<int> const vct_c(vct);
+	std::vector<int> const vcd_c(vcd);
+
+	std::cout << "cap: " << vcd.capacity() << std::endl;
 
 	std::cout << "front(): " << vct.front() << " " << vct_c.front() << std::endl;
 	std::cout << "back(): " << vct.back() << " " <<  vct_c.back() << std::endl;
+
+	std::cout << "back(): " << vcd.back() << " " <<  vcd_c.back() << std::endl;
+
+	printSize(vct_c);
+
+	std::cout << "vcd(): " << vcd.at(6) << std::endl;
+	std::cout << "vct(): " << vct.at(6) << std::endl;
 
 	try {
 		vct.at(10) = 42;
