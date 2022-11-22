@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:40:58 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/20 11:08:12 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/22 02:53:30 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,7 +322,34 @@ namespace ft {
 			}
 
 			// vector& operator=( const vector& other ); //inval
-			// void assign( size_type count, const T& value ); //inval
+			void assign( size_type count, const_reference value ){
+				if (count > size())
+					enlarge(count);
+				_end = _begin + count;
+				while (count != 0)
+				{
+					count--;
+					_begin[count] = value;
+				}
+			} //inval
+
+
+			template <class InputIterator>
+			typename std::enable_if<std::is_base_of<vector_iterator<InputIterator>, InputIterator>::value>::type
+			void assign (InputIterator first, InputIterator last){
+				size_type count;
+
+				count = last - first;
+				if (count > size())
+					enlarge(count);
+				_end = _begin + count;
+				while (count != 0)
+				{
+					count--;
+					_begin[count] = *last;
+					last--;
+				}
+			} // inval
 			// allocator_type get_allocator() const;
 
 			//	Element access

@@ -172,55 +172,42 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 int		main(void)
 {
 	ft::vector<int> vct(7);
+	ft::vector<int> vct_two(4);
+	ft::vector<int> vct_three;
+	ft::vector<int> vct_four;
 
-	int ii = vct.size();
-	(void) ii;
+	std::vector<int> std;
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
-	{
-		int str = vct.at(i);
-		(void) str;
-		vct.at(i) = (vct.size() - i) * 3;
-		std::cout << "vct.at(): " << vct.at(i) << " | ";
-		std::cout << "vct[]: " << vct[i] << std::endl;
-	}
+		vct[i] = (vct.size() - i) * 3;
+	for (unsigned long int i = 0; i < vct_two.size(); ++i)
+		vct_two[i] = (vct_two.size() - i) * 5;
 	printSize(vct);
+	printSize(vct_two);
 
-	std::vector<int> vcd(7);
+	vct_three.assign(vct.begin(), vct.end());
+	vct.assign(vct_two.begin(), vct_two.end());
+	vct_two.assign(2, 42);
+	vct_four.assign(4, 21);
 
-	for (unsigned long int i = 0; i < vcd.size(); ++i)
-	{
-		vcd.at(i) = (vcd.size() - i) * 3;
-		std::cout << "vcd.at(): " << vcd.at(i) << " | ";
-		std::cout << "vcd[]: " << vcd[i] << std::endl;
-	}
+	std::cout << "\t### After assign(): ###" << std::endl;
 
-	std::cout << "max_size: " << vcd.max_size() << std::endl;
+	printSize(vct);
+	printSize(vct_two);
+	printSize(vct_three);
+	printSize(vct_four);
 
-	ft::vector<int> const vct_c(vct);
-	std::vector<int> const vcd_c(vcd);
+	vct_four.assign(6, 84);
+	printSize(vct_four);
 
-	std::cout << "cap: " << vcd.capacity() << std::endl;
+	std::cout << "\t### assign() on enough capacity and low size: ###" << std::endl;
 
-	std::cout << "front(): " << vct.front() << " " << vct_c.front() << std::endl;
-	std::cout << "back(): " << vct.back() << " " <<  vct_c.back() << std::endl;
+	vct.assign(5, 53);
+	vct_two.assign(vct_three.begin(), vct_three.begin() + 3);
 
-	std::cout << "back(): " << vcd.back() << " " <<  vcd_c.back() << std::endl;
+	printSize(vct);
+	printSize(vct_two);
 
-	printSize(vct_c);
-
-	std::cout << "vcd(): " << vcd.at(6) << std::endl;
-	std::cout << "vct(): " << vct.at(6) << std::endl;
-
-	try {
-		vct.at(10) = 42;
-	}
-	catch (std::out_of_range &e) {
-		std::cout << "Catch out_of_range exception!" << std::endl;
-	}
-	catch (std::exception &e) {
-		std::cout << "Catch exception: " << e.what() << std::endl;
-	}
 	return (0);
 }
 
