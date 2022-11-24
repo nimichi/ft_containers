@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:40:58 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/22 02:53:30 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/24 05:53:51 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,6 +281,12 @@ namespace ft {
 				}
 			}
 
+			template< class InputIt >
+			vector( InputIt first, InputIt last, const Allocator& alloc = Allocator()) :  _begin(NULL), _end(NULL), _limit(NULL){
+				_allocator = alloc;
+				assign(first, last);
+			}
+
 			~vector(void){
 				delete [] _begin;
 			}
@@ -321,6 +327,30 @@ namespace ft {
 				return (_allocator);
 			}
 
+			template <class InputIterator>
+			typename std::enable_if<std::__is_cpp17_input_iterator<InputIterator>::value, void>::type
+			assign (InputIterator first, InputIterator last){
+				size_type 		count;
+				InputIterator	temp;
+
+				temp = first;
+				count = 1;
+				while(temp != last){
+					count++;
+					temp++;
+				}
+				if (count > size())
+					enlarge(count);
+				_end = _begin + count - 1;
+				while (count != 0)
+				{
+					count--;
+
+					_begin[count] = *last;
+					last--;
+				}
+			} // inval
+
 			// vector& operator=( const vector& other ); //inval
 			void assign( size_type count, const_reference value ){
 				if (count > size())
@@ -333,23 +363,6 @@ namespace ft {
 				}
 			} //inval
 
-
-			template <class InputIterator>
-			typename std::enable_if<std::is_base_of<vector_iterator<InputIterator>, InputIterator>::value>::type
-			void assign (InputIterator first, InputIterator last){
-				size_type count;
-
-				count = last - first;
-				if (count > size())
-					enlarge(count);
-				_end = _begin + count;
-				while (count != 0)
-				{
-					count--;
-					_begin[count] = *last;
-					last--;
-				}
-			} // inval
 			// allocator_type get_allocator() const;
 
 			//	Element access
@@ -430,50 +443,73 @@ namespace ft {
 			// iterator insert( const_iterator pos, const T& value ); //inval
 			// iterator insert( const_iterator pos, size_type count, const T& value ); //inval
 			// constexpr iterator insert( const_iterator pos, size_type count, const T& value ); //inval
-			template< class input_iterator > iterator insert( const_iterator pos, input_iterator first, input_iterator last ){
-				(void)pos;
-				(void)first;
-				(void)last;
+			template< class input_iterator > void insert( iterator pos, input_iterator first, input_iterator last ){
+				input_iterator	temp_in_iter;
+				iterator		temp_iter;
+				value_type*		temp_ptr;
+				int				count;
+				int				i;
+
+				count = 1;
+				temp_in_iter = first;
+				while (temp_in_iter != last){
+					temp_in_iter++;
+					count++;
+				}
+				temp_iter = begin();
+				i = 0;
+				if(count + size() > capacity()){
+					if (size() + count >= max_size())
+						throw std::bad_alloc();
+					temp_ptr = new value_type[size() + count]; // TODO use allocator
+					_limit = temp_ptr + size() + count;
+					while (temp_iter != pos){
+						temp_ptr[i] = _begin[i];
+						i++;
+						temp_iter++;
+					}
+				}
+				else{
+					while (temp_iter != pos){
+						i++;
+						temp_iter++;
+					}
+				}
+				while (first != last){
+					temp_ptr[i] = *first;
+					first++;
+					i++;
+				}
+				temp_ptr[i] = *last;
+				while (temp_iter != end()){
+					i++;
+					temp_ptr[i] = *temp_iter;
+					temp_iter++;
+				}
+				_begin = temp_ptr;
+				_end = _begin + i;
 			} //inval
 
 			iterator erase( iterator pos ){
-				iterator	temp_it;
-				int			i;
-
-				temp_it = begin();
-				while (temp_it != pos && *temp_it != _end)
-					temp_it++;
-				if (*temp_it == _end)
-					return (temp_it);
-				i = 0;
-				while (*temp_it + i + 1 != _end)
-				{
-					*(*temp_it + i) = *(*temp_it + i + 1) ;
-					i++;
-				}
-				_end--;
-				return (temp_it);
+				return (erase(pos, pos));
 			} //inval
 
 			iterator erase( iterator first, iterator last ){
-				iterator	temp_it;
-				size_type	i;
-				size_type	range;
-
-				temp_it = begin();
-				while (temp_it != first && *temp_it != _end)
-					temp_it++;
-				if (*temp_it == _end)
-					return (temp_it);
-				range = *last - *first + 1;
-				i = 0;
-				while (*temp_it + i + 1 != _end)
-				{
-					*(*temp_it + i) = *(*temp_it + i + range) ;
-					i++;
+				iterator	temp;
+				if (first == end())
+					return (first);
+				while (last != end()){
+					*first = *last;
+					first++;
+					last++;
 				}
-				_end = _end - range;
-				return (temp_it);
+				temp = first;
+				while(first != last){
+					first++;
+					_end--;
+				}
+				_end--;
+				return (temp);
 			} //inval
 
 			void push_back( const value_type& value ){
@@ -534,7 +570,7 @@ namespace ft {
 				{
 					if (size() < max_size() / 2)
 						new_cap = size() * 2;
-					else if (new_cap == max_size())
+					else if (new_cap >= max_size())
 						throw std::bad_alloc();
 					else
 						new_cap =  max_size();

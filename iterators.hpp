@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:41:12 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/21 18:44:25 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/24 05:10:02 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,18 @@ namespace ft
 			vector_random_access_iterator_iterator<T> operator+(const typename vector_iterator<T>::difference_type& other){
 				this->_ptr = this->_ptr + other;
 				return(*this);
+			}
+
+			vector_random_access_iterator_iterator<T> & operator++(){
+				this->_ptr++;
+				return (*this);
+			}
+
+			vector_random_access_iterator_iterator<T> operator++(int){
+				vector_random_access_iterator_iterator<T>	temp;
+				temp = *this;
+				++*this;
+				return (temp);
 			}
 
 			vector_random_access_iterator_iterator<T> & operator--(){

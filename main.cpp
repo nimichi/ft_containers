@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <deque>
+#include <list>
 
 #include <vector>
 #include "vector.hpp"
@@ -146,6 +147,14 @@
 // 	std::cout << vector_str.size() << std::endl;
 // }
 
+void	checkErase(ft::vector<std::string> const &vct,
+					ft::vector<std::string>::const_iterator const &it)
+{
+	static int i = 0;
+	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
+	printSize(vct);
+}
+
 template <typename T>
 void	printSize(ft::vector<T> const &vct, bool print_content = true)
 {
@@ -171,42 +180,31 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 
 int		main(void)
 {
-	ft::vector<int> vct(7);
-	ft::vector<int> vct_two(4);
-	ft::vector<int> vct_three;
-	ft::vector<int> vct_four;
-
-	std::vector<int> std;
+ft::vector<std::string> vct(10);
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 3;
-	for (unsigned long int i = 0; i < vct_two.size(); ++i)
-		vct_two[i] = (vct_two.size() - i) * 5;
+		vct[i] = std::string((vct.size() - i), i + 65);
 	printSize(vct);
-	printSize(vct_two);
 
-	vct_three.assign(vct.begin(), vct.end());
-	vct.assign(vct_two.begin(), vct_two.end());
-	vct_two.assign(2, 42);
-	vct_four.assign(4, 21);
+	checkErase(vct, vct.erase(vct.begin() + 2));
 
-	std::cout << "\t### After assign(): ###" << std::endl;
+	checkErase(vct, vct.erase(vct.begin()));
+	checkErase(vct, vct.erase(vct.end() - 1));
 
+	checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
+	checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
+
+	vct.push_back("Hello");
+	vct.push_back("Hi there");
 	printSize(vct);
-	printSize(vct_two);
-	printSize(vct_three);
-	printSize(vct_four);
+	checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
 
-	vct_four.assign(6, 84);
-	printSize(vct_four);
-
-	std::cout << "\t### assign() on enough capacity and low size: ###" << std::endl;
-
-	vct.assign(5, 53);
-	vct_two.assign(vct_three.begin(), vct_three.begin() + 3);
-
+	vct.push_back("ONE");
+	vct.push_back("TWO");
+	vct.push_back("THREE");
+	vct.push_back("FOUR");
 	printSize(vct);
-	printSize(vct_two);
+	checkErase(vct, vct.erase(vct.begin(), vct.end()));
 
 	return (0);
 }
