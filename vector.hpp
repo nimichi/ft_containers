@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:40:58 by mnies             #+#    #+#             */
-/*   Updated: 2022/11/24 05:53:51 by mnies            ###   ########.fr       */
+/*   Updated: 2022/11/25 02:11:32 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,18 +249,18 @@ namespace ft {
 			// template< class T1, class T2 > std::pair<T1, T2> make_pair( T1 t, T2 u );
 
 			//Member types
-			typedef T                                                            value_type;
-			typedef Allocator                                                    allocator_type;
-			typedef size_t                                                       size_type;
-			typedef ptrdiff_t                                                    difference_type;
-			typedef value_type&                                                  reference;
-			typedef const value_type&                                            const_reference;
-			typedef value_type*                                                  pointer;
-			typedef const value_type*                                            const_pointer;
-			typedef vector_random_access_iterator_iterator<value_type>           iterator;
-			typedef vector_random_access_iterator_iterator<const value_type>     const_iterator;
-			typedef std::reverse_iterator<iterator>                              reverse_iterator;
-			typedef std::reverse_iterator<const_iterator>                        const_reverse_iterator;
+			typedef T											value_type;
+			typedef Allocator									allocator_type;
+			typedef size_t										size_type;
+			typedef ptrdiff_t									difference_type;
+			typedef value_type&									reference;
+			typedef const value_type&							const_reference;
+			typedef value_type*									pointer;
+			typedef const value_type*							const_pointer;
+			typedef random_access_iterator<value_type>			iterator;
+			typedef random_access_iterator<const value_type>	const_iterator;
+			typedef std::reverse_iterator<iterator>				reverse_iterator;
+			typedef std::reverse_iterator<const_iterator>		const_reverse_iterator;
 
 			//Member functions
 			vector(const allocator_type& alloc = allocator_type()) : _begin(NULL), _end(NULL), _limit(NULL), _allocator(alloc){
@@ -440,55 +440,92 @@ namespace ft {
 				_end = _begin;
 			} //inval
 
-			// iterator insert( const_iterator pos, const T& value ); //inval
-			// iterator insert( const_iterator pos, size_type count, const T& value ); //inval
-			// constexpr iterator insert( const_iterator pos, size_type count, const T& value ); //inval
-			template< class input_iterator > void insert( iterator pos, input_iterator first, input_iterator last ){
-				input_iterator	temp_in_iter;
-				iterator		temp_iter;
-				value_type*		temp_ptr;
-				int				count;
-				int				i;
+			iterator insert (iterator position, const value_type& val){
+				pointer		temp_ptr;
+				iterator	temp_iter;
+				size_type	i;
+				size_type	pos_index;
 
-				count = 1;
-				temp_in_iter = first;
-				while (temp_in_iter != last){
-					temp_in_iter++;
-					count++;
-				}
+				if (size() + 1 > capacity())
+					temp_ptr = allocate(size() + 1);
+				else
+					temp_ptr = _begin;
 				temp_iter = begin();
-				i = 0;
-				if(count + size() > capacity()){
-					if (size() + count >= max_size())
-						throw std::bad_alloc();
-					temp_ptr = new value_type[size() + count]; // TODO use allocator
-					_limit = temp_ptr + size() + count;
-					while (temp_iter != pos){
-						temp_ptr[i] = _begin[i];
-						i++;
-						temp_iter++;
+				pos_index = 0;
+				while (temp_iter != position){
+					if (temp_ptr != _begin)
+					{
+						*temp_ptr = *temp_iter;
+						temp_ptr++;
 					}
-				}
-				else{
-					while (temp_iter != pos){
-						i++;
-						temp_iter++;
-					}
-				}
-				while (first != last){
-					temp_ptr[i] = *first;
-					first++;
-					i++;
-				}
-				temp_ptr[i] = *last;
-				while (temp_iter != end()){
-					i++;
-					temp_ptr[i] = *temp_iter;
 					temp_iter++;
+					pos_index++;
 				}
-				_begin = temp_ptr;
-				_end = _begin + i;
-			} //inval
+				i = size();
+				while(pos_index != i)
+				{
+					temp_ptr[i + 1] = temp_ptr[i];
+					i++;
+				}
+				_end = temp_ptr + size();
+				_limit = temp_ptr + capacity();
+				*position = val;
+				return (position);
+			}
+
+			void insert(iterator pos, size_type n, const_reference val){
+				(void)pos;
+				(void)n;
+				(void)val;
+			}
+
+			template<class input_iterator>
+				void insert( iterator pos, input_iterator first, input_iterator last ){
+					input_iterator	temp_in_iter;
+					iterator		temp_iter;
+					pointer			temp_ptr;
+					int				count;
+					int				i;
+
+					count = 1;
+					temp_in_iter = first;
+					while (temp_in_iter != last){
+						temp_in_iter++;
+						count++;
+					}
+					temp_iter = begin();
+					i = 0;
+					if(count + size() > capacity()){
+						if (size() + count >= max_size())
+							throw std::bad_alloc();
+						temp_ptr = new value_type[size() + count]; // TODO use allocator
+						_limit = temp_ptr + size() + count;
+						while (temp_iter != pos){
+							temp_ptr[i] = _begin[i];
+							i++;
+							temp_iter++;
+						}
+					}
+					else{
+						while (temp_iter != pos){
+							i++;
+							temp_iter++;
+						}
+					}
+					while (first != last){
+						temp_ptr[i] = *first;
+						first++;
+						i++;
+					}
+					temp_ptr[i] = *last;
+					while (temp_iter != end()){
+						i++;
+						temp_ptr[i] = *temp_iter;
+						temp_iter++;
+					}
+					_begin = temp_ptr;
+					_end = _begin + i;
+				} //inval
 
 			iterator erase( iterator pos ){
 				return (erase(pos, pos));
@@ -496,6 +533,7 @@ namespace ft {
 
 			iterator erase( iterator first, iterator last ){
 				iterator	temp;
+
 				if (first == end())
 					return (first);
 				while (last != end()){
@@ -542,7 +580,7 @@ namespace ft {
 			} //inval
 
 			void swap( vector& other ){
-				value_type *temp;
+				pointer	temp;
 
 				temp = other._begin();
 				other._begin = _begin;
@@ -556,26 +594,30 @@ namespace ft {
 			} //inval
 
 		private:
-			value_type*		_begin;
-			value_type*		_end;
-			value_type*		_limit;
+			pointer		_begin;
+			pointer		_end;
+			pointer		_limit;
 			allocator_type	_allocator;
 
-			void enlarge(size_type new_cap = 0){
-				value_type*		temp_ptr;
-
-				if(size() == 0 && new_cap == 0)
-					new_cap = 1;
-				else if (new_cap == 0)
+			pointer allocate(size_type new_cap){
+				if (new_cap >= max_size())
+						throw std::bad_alloc();
+				if (new_cap == 0)
 				{
 					if (size() < max_size() / 2)
 						new_cap = size() * 2;
-					else if (new_cap >= max_size())
-						throw std::bad_alloc();
 					else
 						new_cap =  max_size();
 				}
-				temp_ptr = new value_type[new_cap];
+				return (new value_type[new_cap]);
+			}
+
+			void enlarge(size_type new_cap = 0){
+				pointer		temp_ptr;
+
+				if(size() == 0 && new_cap == 0)
+					new_cap = 1;
+				temp_ptr = allocate(new_cap);
 				size_type i = size();
 				while (i != 0)
 				{

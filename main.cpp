@@ -147,14 +147,6 @@
 // 	std::cout << vector_str.size() << std::endl;
 // }
 
-void	checkErase(ft::vector<std::string> const &vct,
-					ft::vector<std::string>::const_iterator const &it)
-{
-	static int i = 0;
-	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
-	printSize(vct);
-}
-
 template <typename T>
 void	printSize(ft::vector<T> const &vct, bool print_content = true)
 {
@@ -178,33 +170,53 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 	std::cout << "###############################################" << std::endl;
 }
 
+void	checkErase(ft::vector<std::string> const &vct,
+					ft::vector<std::string>::const_iterator const &it)
+{
+	static int i = 0;
+	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
+	printSize(vct);
+}
+
+#define TESTED_TYPE int
+#define TESTED_NAMESPACE ft
+
 int		main(void)
 {
-ft::vector<std::string> vct(10);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(10);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct3;
+
+	std::vector<int> sd;
+	sd.begin();
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = std::string((vct.size() - i), i + 65);
+		vct[i] = (vct.size() - i) * 3;
 	printSize(vct);
 
-	checkErase(vct, vct.erase(vct.begin() + 2));
+	vct2.insert(vct2.end(), 42);
+	vct2.insert(vct2.begin(), 2, 21);
+	printSize(vct2);
 
-	checkErase(vct, vct.erase(vct.begin()));
-	checkErase(vct, vct.erase(vct.end() - 1));
+	vct2.insert(vct2.end() - 2, 42);
+	printSize(vct2);
 
-	checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
+	vct2.insert(vct2.end(), 2, 84);
+	printSize(vct2);
 
-	vct.push_back("Hello");
-	vct.push_back("Hi there");
+	vct2.resize(4);
+	printSize(vct2);
+
+	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
+	vct.clear();
+	printSize(vct2);
+
 	printSize(vct);
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
 
-	vct.push_back("ONE");
-	vct.push_back("TWO");
-	vct.push_back("THREE");
-	vct.push_back("FOUR");
-	printSize(vct);
-	checkErase(vct, vct.erase(vct.begin(), vct.end()));
+	for (int i = 0; i < 5; ++i)
+		vct3.insert(vct3.end(), i);
+	vct3.insert(vct3.begin() + 1, 2, 111);
+	printSize(vct3);
 
 	return (0);
 }
