@@ -1,13 +1,21 @@
-template <typename T>
-struct sfinae_true : std::true_type {};
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   enable_if.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/16 06:56:27 by mnies             #+#    #+#             */
+/*   Updated: 2022/12/16 07:48:06 by mnies            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-struct is_iterator_tester {
-    template <typename T>
-    static sfinae_true<typename std::iterator_traits<T>::iterator_category> test(int);
+namespace ft{
+	template<bool, class InType = void>
+	struct enable_if {};
 
-    template <typename>
-    static std::false_type test(...);
-};
-
-template <typename T>
-struct is_iterator : decltype(is_iterator_tester::test<T>(0)) {};
+	template <class InType>
+	struct enable_if<true, InType> {
+		typedef InType type;
+	};
+}

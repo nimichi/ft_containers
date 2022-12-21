@@ -5,6 +5,7 @@
 
 #include <vector>
 #include "vector.hpp"
+#include "__service.ipp"
 // #if 1 //CREATE A REAL STL EXAMPLE
 // 	#include <map>
 // 	#include <stack>
@@ -147,22 +148,56 @@
 // 	std::cout << vector_str.size() << std::endl;
 // }
 
+#define TESTED_TYPE foo<int>
+#define TESTED_NAMESPACE std
+
+#define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
+
 template <typename T>
-void	printSize(ft::vector<T> const &vct, bool print_content = true)
+class foo {
+	public:
+		typedef T	value_type;
+
+		foo(void) : value(), _verbose(false) { };
+		foo(value_type src, const bool verbose = false) : value(src), _verbose(verbose) { };
+		foo(foo const &src, const bool verbose = false) : value(src.value), _verbose(verbose) { };
+		~foo(void) { if (this->_verbose) std::cout << "~foo::foo()" << std::endl; };
+		void m(void) { std::cout << "foo::m called [" << this->value << "]" << std::endl; };
+		void m(void) const { std::cout << "foo::m const called [" << this->value << "]" << std::endl; };
+		foo &operator=(value_type src) { this->value = src; return *this; };
+		foo &operator=(foo const &src) {
+			if (this->_verbose || src._verbose)
+				std::cout << "foo::operator=(foo) CALLED" << std::endl;
+			this->value = src.value;
+			return *this;
+		};
+		value_type	getValue(void) const { return this->value; };
+		void		switchVerbose(void) { this->_verbose = !(this->_verbose); };
+
+		operator value_type(void) const {
+			return value_type(this->value);
+		}
+	private:
+		value_type	value;
+		bool		_verbose;
+};
+
+template <typename T>
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true)
 {
-	const long size = vct.size();
-	const long capacity = vct.capacity();
+	const T_SIZE_TYPE size = vct.size();
+	const T_SIZE_TYPE capacity = vct.capacity();
 	const std::string isCapacityOk = (capacity >= size) ? "OK" : "KO";
 	// Cannot limit capacity's max value because it's implementation dependent
 
 	std::cout << "size: " << size << std::endl;
 	std::cout << "capacity: " << isCapacityOk << std::endl;
+	std::cout << "capacity: " << vct.capacity() << " size: " << vct.size() << std::endl;
 	std::cout << "max_size: " << vct.max_size() << std::endl;
-
 	if (print_content)
 	{
-		typename ft::vector<T>::const_iterator it = vct.begin();
-		typename ft::vector<T>::const_iterator ite = vct.end();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
 		std::cout << std::endl << "Content is:" << std::endl;
 		for (; it != ite; ++it)
 			std::cout << "- " << *it << std::endl;
@@ -170,54 +205,152 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 	std::cout << "###############################################" << std::endl;
 }
 
-void	checkErase(ft::vector<std::string> const &vct,
-					ft::vector<std::string>::const_iterator const &it)
+void	checkErase(TESTED_NAMESPACE::vector<TESTED_TYPE> const &vct,
+					TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator const &it)
 {
 	static int i = 0;
 	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
 	printSize(vct);
 }
 
-#define TESTED_TYPE int
-#define TESTED_NAMESPACE ft
+void	prepost_incdec(TESTED_NAMESPACE::vector<TESTED_TYPE> &vct)
+{
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it_tmp;
+
+	std::cout << "Pre inc" << std::endl;
+	it_tmp = ++it;
+	std::cout << *it_tmp << " | " << *it << std::endl;
+
+	std::cout << "Pre dec" << std::endl;
+	it_tmp = --it;
+	std::cout << *it_tmp << " | " << *it << std::endl;
+
+	std::cout << "Post inc" << std::endl;
+	it_tmp = it++;
+	std::cout << *it_tmp << " | " << *it << std::endl;
+
+	std::cout << "Post dec" << std::endl;
+	it_tmp = it--;
+	std::cout << *it_tmp << " | " << *it << std::endl;
+	std::cout << "###############################################" << std::endl;
+}
+
+template <class T, class Alloc>
+void	cmp(const TESTED_NAMESPACE::vector<T, Alloc> &lhs, const TESTED_NAMESPACE::vector<T, Alloc> &rhs)
+{
+	static int i = 0;
+
+	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
+	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
+	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
+	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
+}
+
+void	is_empty(TESTED_NAMESPACE::vector<TESTED_TYPE> const &vct)
+{
+	std::cout << "is_empty: " << vct.empty() << std::endl;
+}
+
+template <typename Ite_1, typename Ite_2>
+void ft_eq_ope(const Ite_1 &first, const Ite_2 &second, const bool redo = 1)
+{
+	std::cout << "		first: " << *first << "		second: " << *second << std::endl;
+	std::cout << (first < second) << std::endl;
+	std::cout << (first <= second) << std::endl;
+	std::cout << (first > second) << std::endl;
+	std::cout << (first >= second) << std::endl;
+	if (redo)
+		ft_eq_ope(second, first, 0);
+}
+
+	class B {
+	public:
+	    char *l;
+	    int i;
+	    B():l(nullptr), i(1) {};
+	    B(const int &ex) {
+	        this->i = ex;
+	        this->l = new char('a');
+	    };
+	    virtual ~B() {
+	        delete this->l;
+	        this->l = nullptr;
+	    };
+	};
+
+	class A : public B {
+	public:
+	    A():B(){};
+	    A(const B* ex){
+	        this->l = new char(*(ex->l));
+	        this->i = ex->i;
+	        if (ex->i == -1) throw "n";
+	    }
+	    ~A() {
+	        delete this->l;
+	        this->l = nullptr;
+	    };
+	};
 
 int		main(void)
 {
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(10);
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct3;
+	std::vector<int> vector1;
+    std::vector<int> v1;
+    vector1.assign(9900 * _ratio, 1);
+    g_start1 = timer();
+    vector1.resize(5000 * _ratio);
+    vector1.reserve(5000 * _ratio);
+    v1.push_back(vector1.size());
+    v1.push_back(vector1.capacity());
+    vector1.resize(7000 * _ratio);
+    v1.push_back(vector1.size());
+    v1.push_back(vector1.capacity());
+    vector1.resize(15300 * _ratio, int());
+    v1.push_back(vector1.size());
+    v1.push_back(vector1.capacity());
+    v1.push_back(vector1[65]);
+    g_end1 = timer();
 
-	std::vector<int> sd;
-	sd.begin();
+	ft::vector<int> vector;
+    std::vector<int> v;
+    vector.assign(9900 * _ratio, 1);
+    g_start2 = timer();
+    vector.resize(5000 * _ratio);
+    vector.reserve(5000 * _ratio);
+    v.push_back(vector.size());
+    v.push_back(vector.capacity());
+    vector.resize(7000 * _ratio);
+    v.push_back(vector.size());
+    v.push_back(vector.capacity());
+    vector.resize(15300 * _ratio, int());
+    v.push_back(vector.size());
+    v.push_back(vector.capacity());
+    v.push_back(vector[65]);
+    g_end2 = timer();
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 3;
-	printSize(vct);
+    std::vector<int> diff;
+    //no need to sort since it's already sorted
+    //but you can sort with:
+    //std::sort(std::begin(v1), std::end(v1))
 
-	vct2.insert(vct2.end(), 42);
-	vct2.insert(vct2.begin(), 2, 21);
-	printSize(vct2);
+    std::set_difference(v.begin(), v.end(), v1.begin(), v1.end(),
+        std::inserter(diff, diff.begin()));
 
-	vct2.insert(vct2.end() - 2, 42);
-	printSize(vct2);
+    for (auto i : v1) std::cout << i << ' ';
+    std::cout << "\nminus\n";
+    for (auto i : v) std::cout << i << ' ';
+    std::cout << "\nis: ";
 
-	vct2.insert(vct2.end(), 2, 84);
-	printSize(vct2);
+    for (auto i : diff) std::cout << i << ' ';
+    std::cout << '\n';
 
-	vct2.resize(4);
-	printSize(vct2);
-
-	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
-	vct.clear();
-	printSize(vct2);
-
-	printSize(vct);
-
-	for (int i = 0; i < 5; ++i)
-		vct3.insert(vct3.end(), i);
-	vct3.insert(vct3.begin() + 1, 2, 111);
-	printSize(vct3);
-
-	return (0);
+	// if (v < v1)
+	// 	std::cout << "true" << std::endl;
+	// else
+	// 	std::cout << "false" << std::endl;
+	// printSize(v1, true);
+	// printSize(v, true);
+	return 0;
 }
 
