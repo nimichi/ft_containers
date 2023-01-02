@@ -6,10 +6,13 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/18 09:06:32 by mnies             #+#    #+#             */
-/*   Updated: 2022/12/18 09:32:04 by mnies            ###   ########.fr       */
+/*   Updated: 2022/12/30 18:33:14 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
+
+#include <cstddef>
 
 namespace ft {
 	template<class InputIt1, class InputIt2>
@@ -22,6 +25,10 @@ namespace ft {
 				return (true);
 			if (last2 < first2)
 				return (false);
+			if (first2.base() == NULL)
+				return (false);
+			if (first1.base() == NULL)
+				return (true);
 			if (*first1 < *first2)
 				return (true);
 			if (*first2 < *first1)

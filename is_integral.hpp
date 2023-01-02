@@ -6,9 +6,11 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 06:46:52 by mnies             #+#    #+#             */
-/*   Updated: 2022/12/20 18:19:44 by mnies            ###   ########.fr       */
+/*   Updated: 2022/12/28 13:00:03 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 namespace ft {
 	template <class InType>

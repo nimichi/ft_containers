@@ -6,9 +6,11 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 06:56:27 by mnies             #+#    #+#             */
-/*   Updated: 2022/12/16 07:48:06 by mnies            ###   ########.fr       */
+/*   Updated: 2022/12/28 12:59:58 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#pragma once
 
 namespace ft{
 	template<bool, class InType = void>
