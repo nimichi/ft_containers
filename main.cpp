@@ -6,29 +6,84 @@
 #include "vector.hpp"
 #include <iostream>
 
-#include "vector_prelude.hpp"
+// #include "vector_prelude.hpp"
+#include "map_prelude.hpp"
 
 #define TESTED_NAMESPACE ft
 #define TESTED_TYPE int
 #define _ratio 10
 
-int		main(void)
+// int		main(void)
+// {
+// 	ft::map<int, int> test = ft::map<int, int>();
+// 	test.insert(ft::pair<int, int>(1, 10));
+// 	test.insert(ft::pair<int, int>(15, 10));
+// 	test.insert(ft::pair<int, int>(6, 10));
+// 	test.insert(ft::pair<int, int>(27, 10));
+// 	test.insert(ft::pair<int, int>(11, 10));
+// 	test.insert(ft::pair<int, int>(17, 10));
+// 	test.insert(ft::pair<int, int>(13, 10));
+// 	test.insert(ft::pair<int, int>(8, 10));
+// 	test.insert(ft::pair<int, int>(22, 10));
+// 	test.insert(ft::pair<int, int>(25, 10));
+// 	ft::map<int, int>::iterator start_iter;
+// 	ft::map<int, int>::iterator end_iter;
+// 	start_iter = test.begin();
+// 	end_iter = start_iter;
+// 	std::advance(start_iter, 5);
+// 	std::advance(end_iter, 6);
+// 	test.erase(start_iter, end_iter);
+
+// 	start_iter = test.begin();
+// 	end_iter = test.end();
+
+// 	std::cout << "\n" << std::endl;
+// 	while(start_iter != end_iter)
+// 	{
+// 		std::cout << (*start_iter).first << "\n" << std::endl;
+// 		start_iter++;
+// 	}
+// }
+
+int main(void)
 {
-	std::list<TESTED_TYPE> lst;
-	std::list<TESTED_TYPE>::iterator lst_it;
-	for (int i = 1; i < 5; ++i)
-		lst.push_back(i * 3);
+    SETUP_ARRAYS();
 
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(lst.begin(), lst.end());
-	CHECK_AND_PRINT_ALL(vct);
+    {
+		std::map<int ,int> blc;
+		blc.max_size()
+        strmap m(strstr_arr, strstr_arr + 16);
 
-	lst_it = lst.begin();
-	for (int i = 1; lst_it != lst.end(); ++i)
-		*lst_it++ = i * 5;
-	vct.assign(lst.begin(), lst.end());
-	CHECK_AND_PRINT_ALL(vct);
+        strmap::iterator it = m.find("Hello");
 
-	vct.insert(vct.end(), lst.rbegin(), lst.rend());
-	CHECK_AND_PRINT_ALL(vct);
-    return 0;
+        m.insert(strstr_arr, strstr_arr + strstr_size);
+
+
+        m.erase(m.begin());
+
+
+        it = m.begin();
+        std::advance(it, 10);
+
+        m.erase(it, m.end());
+
+		std::cout << m.size() << std::endl;
+
+        PRINT_ALL(m);
+    }
+
+    // {
+    //     NAMESPACE::map<int, int, std::less<int>, track_allocator<NAMESPACE::pair<const int, int> > >
+    //         m;
+
+    //     for (int i = 0; i < 50000; ++i) {
+    //         m.insert(NAMESPACE::make_pair(rand(), rand()));
+    //     }
+
+    //     PRINT_ALL(m);
+
+    //     m.erase(m.begin(), m.end());
+
+    //     PRINT_ALL(m);
+    // }
 }

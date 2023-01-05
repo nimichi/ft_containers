@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 12:58:55 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/02 21:23:27 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/05 16:36:10 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <limits>
 #include "iterator.hpp"
 #include "enable_if.hpp"
 #include "is_integral.hpp"
@@ -262,8 +263,8 @@ namespace ft {
 			}
 
 			size_type max_size() const{
-				if ((size_type)std::allocator_traits<allocator_type>::max_size(_allocator) < (size_type)std::numeric_limits<difference_type>::max())
-					return std::allocator_traits<allocator_type>::max_size(_allocator);
+				if ((size_type)_allocator.max_size() < (size_type)std::numeric_limits<difference_type>::max())
+					return _allocator.max_size();
 				else
 					return std::numeric_limits<difference_type>::max();
 				// return std::min<size_type>(std::allocator_traits<allocator_type>::max_size(_allocator), std::numeric_limits<difference_type>::max());

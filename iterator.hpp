@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 12:59:17 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/02 18:09:47 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/05 17:44:03 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ namespace ft
 
 			pointer operator->() const
 			{
-				return (pointer)std::addressof(*_ptr);
+				return *_ptr;
 			}
 
 			iterator& operator++()
@@ -283,8 +283,9 @@ namespace ft
 			return *--ret;
 		}
 
-		pointer operator->() const{
-			return (pointer)std::addressof(operator*());
+		pointer operator->() const
+		{
+			return &(operator*());
 		}
 
 		reverse_iterator& operator++()
