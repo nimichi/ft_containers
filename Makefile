@@ -1,8 +1,9 @@
-NAME = main
-SRCS = main.cpp leak_checker.cpp memory_tracker.cpp
+NAME = containers
+#SRCS = _main.cpp _leak_checker.cpp _memory_tracker.cpp
+SRCS = tests.cpp
 OBJS := ${SRCS:.cpp=.o}
 CC = c++
-CFLAGS = -g -Wall -Wextra -Werror -std=c++14 #TODO remove -g flag
+CFLAGS = -g -Wall -Wextra -Werror -std=c++98 #TODO remove -g flag
 
 all: $(NAME)
 %.o: %.cpp $(HDR)

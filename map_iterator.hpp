@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 14:54:30 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/05 01:28:31 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/06 03:46:21 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,9 @@ namespace ft
 		node *right;
 		node *parent;
 		bool isRed;
-		value_type* value;
+		value_type value;
 
-		node() : left(NULL), right(NULL), parent(NULL), isRed(false), value(NULL)
-		{
-
-		}
-
-		node(value_type* value, node *parent, node *head) : left(head), right(head), parent(parent), isRed(true), value(value)
+		node(value_type value, node *parent, node *head) : left(head), right(head), parent(parent), isRed(true), value(value)
 		{
 
 		}
@@ -58,9 +53,6 @@ namespace ft
 			typedef const_map_iterator<value_type>			const_iterator;
 
 		private:
-			template <class> friend class const_map_iterator;
-
-		protected:
 			node_pointer _node;
 
 		public:
@@ -68,18 +60,18 @@ namespace ft
 
 			map_iterator(node_pointer node)  : _node(node){}
 
-			map_iterator(const map_iterator &other) : _node(other._node){}
+			map_iterator(const map_iterator &other) : _node(other.base()){}
 
-			reference operator*() const { return *(_node->value); }
+			reference operator*() const { return (_node->value); }
 
 			pointer operator->() const { return &(operator*()); }
 
 			map_iterator& operator++()
 			{
-				if (_node->right->value != NULL)
+				if (_node->right->right != _node->right)
 				{
 					_node = _node->right;
-					while (_node->left->value != NULL)
+					while (_node->left->right != _node->left)
 						_node = _node->left;
 					return *this;
 				}
@@ -98,10 +90,10 @@ namespace ft
 
 			map_iterator& operator--()
 			{
-				if (_node->left->value != NULL)
+				if (_node->left->right != _node->left)
 				{
 					_node = _node->left;
-					while (_node->right->value != NULL)
+					while (_node->right->right != _node->right)
 						_node = _node->right;
 					return *this;
 				}
@@ -120,11 +112,11 @@ namespace ft
 
 			bool operator==(const map_iterator& other) const { return _node == other._node; }
 
-			bool operator==(const const_map_iterator<value_type>& other) const { return _node == other.base(); }
-
 			bool operator!=(const map_iterator& other) const { return !(*this == other); }
 
-			bool operator!=(const const_map_iterator<value_type>& other) const { return !(*this == other); }
+			bool operator==(const const_iterator& other) const { return _node == other.base(); }
+
+			bool operator!=(const const_iterator& other) const { return !(*this == other); }
 
 			node_pointer base() const { return _node; }
 	};
@@ -135,10 +127,10 @@ namespace ft
 		public:
 			typedef ft::bidirectional_iterator_tag			iterator_category;
 			typedef T										value_type;
-			typedef const node<value_type>*					node_pointer;
+			typedef node<value_type>*						node_pointer;
 			typedef ptrdiff_t								difference_type;
-			typedef value_type&								reference;
-			typedef value_type*								pointer;
+			typedef const value_type&						reference;
+			typedef const value_type*						pointer;
 			typedef map_iterator<value_type>				iterator;
 
 		private:
@@ -148,22 +140,22 @@ namespace ft
 
 			const_map_iterator() : _node(NULL) {}
 
-			const_map_iterator(const iterator& other) : _node(other._node) {}
+			const_map_iterator(const iterator& other) : _node(other.base()) {}
 
 			const_map_iterator(const const_map_iterator& other) : _node(other._node) {}
 
 			const_map_iterator(node_pointer node) : _node(node) {}
 
-			reference operator*() const { return *(_node->value); }
+			reference operator*() const { return (_node->value); }
 
 			pointer operator->() const { return &(operator*()); }
 
 			const_map_iterator& operator++()
 			{
-				if (_node->right->value != NULL)
+				if (_node->right->right != _node->right)
 				{
 					_node = _node->right;
-					while (_node->left->value != NULL)
+					while (_node->left->right != _node->left)
 						_node = _node->left;
 					return *this;
 				}
@@ -182,10 +174,10 @@ namespace ft
 
 			const_map_iterator& operator--()
 			{
-				if (_node->left->value != NULL)
+				if (_node->left->right != _node->left)
 				{
 					_node = _node->left;
-					while (_node->right->value != NULL)
+					while (_node->right->right != _node->right)
 						_node = _node->right;
 					return *this;
 				}
@@ -204,13 +196,14 @@ namespace ft
 
 			bool operator==(const const_map_iterator& other) const { return _node == other._node; }
 
-			bool operator==(const map_iterator<value_type>& other) const { return _node == other.base(); }
-
 			bool operator!=(const const_map_iterator& other) const { return !(*this == other); }
 
-			bool operator!=(const map_iterator<value_type>& other) const { return !(*this == other); }
+			bool operator==(const iterator& other) const { return _node == other.base(); }
+
+			bool operator!=(const iterator& other) const { return !(*this == other); }
 
 			node_pointer base() const { return _node; }
-};
+	};
+
 } // namespace ft
 

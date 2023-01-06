@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:41:06 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/05 02:58:56 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/06 03:12:34 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,10 @@
 #include <functional>
 
 #include "tree.hpp"
-#include "lexicographical_compare.hpp"
+#include "utilities.hpp"
 
 namespace ft
 {
-	template <typename InputIterator1, typename InputIterator2>
-	bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
-	{
-		while (first1 != last1) {
-			if (!(*first1 == *first2)) return false;
-			++first1;
-			++first2;
-		}
-		return true;
-	}
 
 	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<pair<const Key, T> > >
 	class map
@@ -49,7 +39,7 @@ namespace ft
 			typedef typename Allocator::pointer												pointer;
 			typedef typename Allocator::const_pointer										const_pointer;
 			typedef ft::map_iterator< value_type >											iterator;
-			typedef ft::const_map_iterator< value_type >									const_iterator;
+			typedef ft::const_map_iterator< value_type >								const_iterator;
 			typedef ft::reverse_iterator<iterator>											reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>									const_reverse_iterator;
 
@@ -287,12 +277,12 @@ namespace ft
 
 			pair<iterator,iterator> equal_range(const key_type& key)
 			{
-				return (pair<iterator,iterator>(lower_bound(key), upper_bound(key)));
+				return (ft::make_pair<iterator,iterator>((iterator)lower_bound(key), (iterator)upper_bound(key)));
 			}
 
 			pair<const_iterator,const_iterator> equal_range(const key_type& key) const
 			{
-				return (pair<const_iterator,const_iterator>(lower_bound(key), upper_bound(key)));
+				return (ft::make_pair<const_iterator,const_iterator>((const_iterator)lower_bound(key), (const_iterator)upper_bound(key)));
 			}
 
 	};

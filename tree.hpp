@@ -6,16 +6,14 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 19:32:58 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/05 19:03:36 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/06 02:58:32 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <cstddef>
 #include <stdexcept>
-#include <iostream>
-#include "pair.hpp"
+#include "utilities.hpp"
 #include "map_iterator.hpp"
 
 namespace ft
@@ -139,16 +137,13 @@ namespace ft
 				node_type* ret;
 
 				ret = _node_alloc.allocate(1);
-				_node_alloc.construct(ret, node_type(_alloc.allocate(1), tmp_parent, _head_node));
-				_alloc.construct((ret)->value, value_type(value));
+				_node_alloc.construct(ret, node_type(value, tmp_parent, _head_node));
 				++_node_count;
 				return(ret);
 			}
 
 			void destroy_node(node_type* node)
 			{
-				_alloc.destroy(node->value);
-				_alloc.deallocate(node->value, 1);
 				_node_alloc.destroy(node);
 				_node_alloc.deallocate(node, 1);
 				--_node_count;
@@ -234,6 +229,7 @@ namespace ft
 						}
 					}
 				}
+				_head_node->right = _head_node;
 				x->isRed = false;
 			}
 
@@ -263,9 +259,9 @@ namespace ft
 
 			tree(value_compare cmp, allocator_type alloc) : _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()), _node_count(0), _head_node(_node_alloc.allocate(1)), _begin_node(_head_node)
 			{
-				_node_alloc.construct(_head_node, node_type(NULL, NULL, NULL));
-				_head_node->left = _head_node;
+				_node_alloc.construct(_head_node, node_type(value_type(), NULL, NULL));
 				_head_node->right = _head_node;
+				_head_node->left = _head_node;
 			}
 
 			~tree()
@@ -285,24 +281,46 @@ namespace ft
 				while(*tmp != _head_node)
 				{
 					tmp_parent = *tmp;
-					if (_cmp(value, *(tmp_parent->value)))
+					if (_cmp(value, tmp_parent->value))
 						tmp = &(tmp_parent->left);
-					else if (_cmp(*(tmp_parent->value), value))
+					else if (_cmp(tmp_parent->value, value))
 						tmp = &(tmp_parent->right);
 					else
-						return ft::make_pair<iterator, bool>(iterator(*tmp), false);
+						return ft::make_pair<iterator, bool>(iterator(tmp_parent), false);
 				}
 				*tmp = make_node(value, tmp_parent);
-				order(*tmp);
+				tmp_parent = *tmp;
+				order(tmp_parent);
 				move_begin_node();
-				return ft::make_pair<iterator, bool>(iterator(*tmp), true);
+				return ft::make_pair<iterator, bool>(iterator(tmp_parent), true);
 			}
 
 			iterator insert(iterator pos, const value_type& value)
 			{
-				(void) pos;
+				node_type** tmp;
+				node_type*  parent;
+				iterator    iter;
 
-				return (insert(value).first);
+				tmp = &(pos.base()->parent);
+				if (pos.base() != _head_node && _cmp(*pos, value) && (++pos).base() != _head_node && _cmp(value, *pos))
+				{
+					while(*tmp != _head_node)
+					{
+						parent = *tmp;
+						if (_cmp(value, parent->value))
+							tmp = &(parent->left);
+						else
+							tmp = &(parent->right);
+					}
+					*tmp = make_node(value, parent);
+					order(*tmp);
+					move_begin_node();
+					return (iterator(*tmp));
+				}
+				else
+				{
+					return (insert(value).first);
+				}
 			}
 
 			size_type erase(const key_type& key)
@@ -312,9 +330,9 @@ namespace ft
 				tmp = _head_node->left;
 				while(tmp != _head_node)
 				{
-					if (_cmp(key, *(tmp->value)))
+					if (_cmp(key, tmp->value))
 						tmp = tmp->left;
-					else if (_cmp(*(tmp->value), key))
+					else if (_cmp(tmp->value, key))
 						tmp = tmp->right;
 					else
 					{
@@ -438,9 +456,9 @@ namespace ft
 				tmp = _head_node->left;
 				while(tmp != _head_node)
 				{
-					if (_cmp(key, *(tmp->value)))
+					if (_cmp(key, tmp->value))
 						tmp = tmp->left;
-					else if (_cmp(*(tmp->value), key))
+					else if (_cmp(tmp->value, key))
 						tmp = tmp->right;
 					else
 						return (iterator(tmp));
@@ -455,9 +473,9 @@ namespace ft
 				tmp = _head_node->left;
 				while(tmp != _head_node)
 				{
-					if (_cmp(key, *(tmp->value)))
+					if (_cmp(key, tmp->value))
 						tmp = tmp->left;
-					else if (_cmp(*(tmp->value), key))
+					else if (_cmp(tmp->value, key))
 						tmp = tmp->right;
 					else
 						return (const_iterator(tmp));
@@ -472,12 +490,12 @@ namespace ft
 				tmp = _head_node->left;
 				while(tmp != _head_node)
 				{
-					if (_cmp(key, *(tmp->value)))
+					if (_cmp(key, tmp->value))
 						tmp = tmp->left;
-					else if (_cmp(*(tmp->value), key))
+					else if (_cmp(tmp->value, key))
 						tmp = tmp->right;
 					else
-						return (*(tmp->value));
+						return (tmp->value);
 				}
 				throw std::out_of_range("Key not found!");
 			}
@@ -489,12 +507,12 @@ namespace ft
 				tmp = _head_node->left;
 				while(tmp != _head_node)
 				{
-					if (_cmp(key, *(tmp->value)))
+					if (_cmp(key, tmp->value))
 						tmp = tmp->left;
-					else if (_cmp(*(tmp->value), key))
+					else if (_cmp(tmp->value, key))
 						tmp = tmp->right;
 					else
-						return (tmp->value->second);
+						return (tmp->value.second);
 				}
 				return ((*(insert(value_type(key, mapped_type())).first)).second);
 			}
@@ -506,9 +524,9 @@ namespace ft
 				tmp = _head_node->left;
 				while(tmp != _head_node)
 				{
-					if (_cmp(key, *(tmp->value)))
+					if (_cmp(key, tmp->value))
 						tmp = tmp->left;
-					else if (_cmp(*(tmp->value), key))
+					else if (_cmp(tmp->value, key))
 						tmp = tmp->right;
 					else
 						return (1);
@@ -522,7 +540,7 @@ namespace ft
 				node_type* node = _head_node->left;
 				while (node != _head_node)
 				{
-					if (!_cmp(*(node->value), key))
+					if (!_cmp(node->value, key))
 					{
 						ret = node;
 						node = node->left;
@@ -541,7 +559,7 @@ namespace ft
 				node_type* node = _head_node->left;
 				while (node != _head_node)
 				{
-					if (_cmp(key, *(node->value)))
+					if (_cmp(key, node->value))
 					{
 						ret = node;
 						node = node->left;
@@ -554,24 +572,20 @@ namespace ft
 				return ret;
 			}
 
-			pair<iterator,iterator> equal_range(const key_type& key)
+			node_type* begin()
 			{
-				(void) key;
-				return NULL; //TODO
+				return (_begin_node);
 			}
-
-			pair<const_iterator,const_iterator> equal_range(const key_type& key) const
-			{
-				(void) key;
-				return NULL; //TODO
-			}
-
 
 			node_type* begin() const
 			{
 				return (_begin_node);
 			}
 
+			node_type* end()
+			{
+				return (_head_node);
+			}
 
 			node_type* end() const
 			{

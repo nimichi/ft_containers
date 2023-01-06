@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 12:58:55 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/05 16:36:10 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/06 02:58:08 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,7 @@
 #include <stdexcept>
 #include <limits>
 #include "iterator.hpp"
-#include "enable_if.hpp"
-#include "is_integral.hpp"
-#include "lexicographical_compare.hpp"
+#include "utilities.hpp"
 
 namespace ft {
 
