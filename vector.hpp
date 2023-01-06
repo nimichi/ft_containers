@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 12:58:55 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/06 02:58:08 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/07 00:04:19 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ namespace ft {
 			typedef ft::reverse_iterator<const_iterator>						const_reverse_iterator;
 
 		private:
-			pointer		_begin;
-			pointer		_end;
-			pointer		_limit;
-			allocator_type	_allocator;
+			pointer				_begin;
+			pointer				_end;
+			pointer				_limit;
+			allocator_type		_allocator;
 
 		public:
 			//Member functions
@@ -380,14 +380,92 @@ namespace ft {
 			typename ft::enable_if<!ft::is_integral<input_iterator>::value, void>::type
 			insert( iterator pos, input_iterator first, input_iterator last )
 			{
+				size_type n;
+				size_type i;
+				const difference_type distance = pos - begin();
+				const size_type	old_size = size();
+				input_iterator tmp = first;
+
+
 				if (insert_is_input_iterator_tag(ft::iterator_category(first)))
 				{
-					vector v(first, last);
-					insert_pos(pos, v.begin(), v.end());
+					if (pos == end())
+					{
+						while (first != last)
+						{
+							push_back(*first);
+							++first;
+						}
+					}
+					else if (first != last)
+					{
+						vector tmp(first, last);
+						insert(pos, tmp.begin(), tmp.end());
+					}
 				}
 				else
 				{
-					insert_pos(pos, first, last);
+					n = 0;
+					while (tmp != last)
+					{
+						++tmp;
+						++n;
+					}
+					i = 0;
+					if (n > 0)
+					{
+						if (old_size + n > capacity())
+						{
+							enlarge(old_size + n, distance);
+							_end = _begin + n + old_size;
+							while (i < n)
+							{
+								_allocator.construct(_begin + distance + i, *first);
+								first++;
+								i++;
+							}
+						}
+						else if (pos == end())
+						{
+							while (first != last)
+							{
+								_allocator.construct(_end, *first);
+								++first;
+								++_end;
+							}
+						}
+						else
+						{
+							i = old_size - distance;
+							while (i > 0)
+							{
+								--i;
+								if (_begin + distance + n + i >= _end)
+								{
+									_allocator.construct(_begin + distance + n + i, _begin[distance + i]);
+								}
+								else
+								{
+									_begin[distance + n + i] = _begin[distance + i];
+								}
+							}
+							i = 0;
+							while (i < n)
+							{
+								if (_begin + distance + i >= _end)
+								{
+									_allocator.construct(_begin + distance + i, *first);
+								}
+								else
+								{
+									_begin[distance + i] = *first;
+								}
+								first++;
+								i++;
+							}
+							_end = _end + n;
+						}
+					}
 				}
 			}
 
@@ -413,7 +491,8 @@ namespace ft {
 				return first;
 			}
 
-			void push_back( const value_type& value ){
+			void push_back( const value_type& value )
+			{
 				if (_end == _limit)
 					enlarge(capacity() + 1, capacity());
 				_allocator.construct(_end, value);
@@ -505,76 +584,77 @@ namespace ft {
 				return false;
 			}
 
-			template<typename input_iterator>
-			void insert_pos( iterator pos, input_iterator first, input_iterator last)
+			// template<typename input_iterator>
+			// void insert_pos( iterator pos, input_iterator first, input_iterator last)
+			// {
+			// 	size_type pos_size;
+			// 	size_type i;
+			// 	size_type n;
+			// 	input_iterator tmp;
+
+			// 	if((sizeof(value_type) != sizeof(*first)))
+			// 		throw std::exception();
+			// 	i = 0;
+			// 	tmp = first;
+			// 	n = 0;
+			// 	while (tmp != last)
+			// 	{
+			// 		++n;
+			// 		++tmp;
+			// 	}
+			// 	pos_size = pos.base() - _begin;
+			// 	if (_end + n > _limit)
+			// 	{
+			// 		enlarge(size() + n, pos_size);
+			// 		if (_begin + pos_size == _end)
+			// 			_end += n;
+			// 		while(n > i)
+			// 		{
+			// 			_allocator.construct(_begin + pos_size + i, *first);
+			// 			++first;
+			// 			++i;
+			// 		}
+			// 	}
+			// 	else if (pos.base() == _end)
+			// 	{
+			// 		while(n > i)
+			// 		{
+			// 			_allocator.construct(_begin + pos_size + i, *first);
+			// 			++i;
+			// 			++first;
+			// 			++_end;
+			// 		}
+			// 	}
+			// 	else
+			// 	{
+			// 		while (n > i && _begin + pos_size + i < _end)
+			// 		{
+			// 			++i;
+			// 			_allocator.construct(_end + n - i, *(_end - i));
+			// 		}
+			// 		while (_begin + pos_size + i < _end)
+			// 		{
+			// 			++i;
+			// 			_end[n - i] = *(_end - i);
+			// 		}
+			// 		_end += n;
+			// 		while (n > i)
+			// 		{
+			// 			++i;
+			// 			++first;
+			// 			_allocator.construct(_begin + pos_size + i, *first);
+			// 		}
+			// 		while (n > i)
+			// 		{
+			// 			++i;
+			// 			++first;
+			// 			_begin[pos_size + i] = *first;
+			// 		}
+			// 	}
+			// }
+
+			pointer allocate(size_type new_cap)
 			{
-				size_type pos_size;
-				size_type i;
-				size_type n;
-				input_iterator tmp;
-
-				if((sizeof(value_type) != sizeof(*first)))
-					throw std::exception();
-				i = 0;
-				tmp = first;
-				n = 0;
-				while (tmp != last)
-				{
-					++n;
-					++tmp;
-				}
-				pos_size = pos.base() - _begin;
-				if (_end + n > _limit)
-				{
-					enlarge(size() + n, pos_size);
-					if (_begin + pos_size == _end)
-						_end += n;
-					while(n > i)
-					{
-						_allocator.construct(_begin + pos_size + i, *first);
-						++first;
-						++i;
-					}
-				}
-				else if (pos.base() == _end)
-				{
-					while(n > i)
-					{
-						_allocator.construct(_begin + pos_size + i, *first);
-						++i;
-						++first;
-						++_end;
-					}
-				}
-				else
-				{
-					while (n > i && _begin + pos_size + i < _end)
-					{
-						++i;
-						_allocator.construct(_end + n - i, *(_end - i));
-					}
-					while (_begin + pos_size + i < _end)
-					{
-						++i;
-						_end[n - i] = *(_end - i);
-					}
-					_end += n;
-					while (n > i)
-					{
-						++i;
-						++first;
-						_allocator.construct(_begin + pos_size + i, *first);
-					}
-					while (n > i)
-					{
-						++i;
-						++first;
-						_begin[pos_size + i] = *first;
-					}
-				}
-			}
-
-			pointer allocate(size_type new_cap){
 				if (new_cap >= max_size())
 						throw std::bad_alloc();
 				return (_allocator.allocate(new_cap));

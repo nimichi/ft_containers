@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/02 20:41:06 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/06 03:12:34 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/06 21:44:19 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ namespace ft
 			typedef typename Allocator::pointer												pointer;
 			typedef typename Allocator::const_pointer										const_pointer;
 			typedef ft::map_iterator< value_type >											iterator;
-			typedef ft::const_map_iterator< value_type >								const_iterator;
+			typedef ft::const_map_iterator< value_type >									const_iterator;
 			typedef ft::reverse_iterator<iterator>											reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>									const_reverse_iterator;
 

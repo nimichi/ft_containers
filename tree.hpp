@@ -6,7 +6,7 @@
 /*   By: mnies <mnies@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 19:32:58 by mnies             #+#    #+#             */
-/*   Updated: 2023/01/06 02:58:32 by mnies            ###   ########.fr       */
+/*   Updated: 2023/01/06 19:23:37 by mnies            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -600,10 +600,7 @@ namespace ft
 
 			size_type max_size() const
 			{
-				if ((size_type)_node_alloc.max_size() < (size_type)std::numeric_limits<difference_type>::max())
-					return _node_alloc.max_size();
-				else
-					return std::numeric_limits<difference_type>::max();
+				return _node_alloc.max_size();
 			}
 
 			void assign_comp_and_alloc(const tree& other)
